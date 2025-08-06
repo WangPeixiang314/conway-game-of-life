@@ -1,6 +1,6 @@
 # Conway's Game of Life - GPU/CPU High Performance Version
 
-A high-performance cellular automaton simulator based on Conway's Game of Life rules, featuring GPU acceleration and interactive controls.
+A high-performance cellular automaton simulator based on Conway's Game of Life rules, featuring GPU acceleration and interactive controls. This project uses Pygame for the graphical interface, Numba for CPU optimization, and optional CUDA for GPU acceleration.
 
 ## 🎮 Features
 
@@ -8,31 +8,31 @@ A high-performance cellular automaton simulator based on Conway's Game of Life r
 - **Classic Game of Life Rules**: Strictly follows Conway's four fundamental rules
 - **GPU Acceleration Support**: Utilizes CUDA for parallel GPU computing, significantly boosting performance
 - **CPU Optimization**: Uses Numba JIT compiler for optimized CPU performance
-- **Real-time Interaction**: Supports mouse drawing, erasing, dragging and other operations
+- **Real-time Interaction**: Supports mouse drawing and erasing operations
 
 ### Visualization Features
-- **High-definition Rendering**: Supports 800x440 resolution grid with 2-pixel cell size
-- **Smooth Animation**: Up to 300 FPS with adjustable frame rate
-- **Modern UI**: Contemporary interface design with Chinese language support
-- **Real-time Statistics**: Displays current generation, live cell count, FPS and more
+- **High-definition Rendering**: 800×440 grid with 2-pixel cell size
+- **Smooth Animation**: Adjustable frame rate (15-300 FPS)
+- **Modern Interface**: Dark theme with real-time status display
+- **Real-time Statistics**: Displays current generation, live cell count, compute time, FPS, and more
 
 ### Interactive Functions
-- **Brush Tool**: Adjustable brush size for drawing and erasing
-- **Preset Patterns**: Built-in classic patterns (gliders, spaceships, etc.)
-- **Random Generation**: Random initial states with adjustable density and clustering
+- **Brush Tool**: Adjustable circular brush (1-30 pixels)
+- **Cluster Generation**: Random initial state generation based on Gaussian distribution
 - **Pause/Resume**: Pause and resume simulation at any time
-- **Step Execution**: Supports single-step debugging mode
 - **Clear Function**: One-click clearing of all cells
+- **Reset Function**: Regenerate random initial state
+- **Grid Display**: Toggle grid lines on/off
 
-### Performance Optimization
-- **Smart Device Selection**: Automatically detects and uses GPU (if available)
-- **Memory Optimization**: Efficient data structures and memory management
-- **Parallel Computing**: Full utilization of multi-core CPU and GPU parallel capabilities
+### Performance Features
+- **Smart Device Switching**: Dynamically switch between CPU/GPU computation modes at runtime
+- **Memory Optimization**: Uses NumPy arrays and Numba JIT optimization
+- **Parallel Computing**: Supports multi-core CPU and GPU parallel processing
 
 ## 🚀 Quick Start
 
 ### Requirements
-- Python 3.11+
+- Python 3.7+
 - NVIDIA GPU with CUDA support (optional, for GPU acceleration)
 
 ### Install Dependencies
@@ -45,15 +45,6 @@ pip install -r requirements.txt
 python main.py
 ```
 
-### Controls
-- **Left Mouse Button**: Draw live cells
-- **Right Mouse Button**: Erase cells
-- **Mouse Wheel**: Adjust brush size
-- **Space**: Pause/Resume
-- **R**: Regenerate random state
-- **C**: Clear screen
-- **+/-**: Adjust frame rate
-
 ## 🎯 Game Rules
 
 Conway's Game of Life four basic rules:
@@ -63,58 +54,81 @@ Conway's Game of Life four basic rules:
 3. **Reproduction**: Any dead cell with exactly 3 live neighbors becomes a live cell
 4. **Stasis**: All other cells maintain their current state
 
+*Note: Uses periodic (wrap-around) boundary conditions*
+
+## 🎮 Controls
+
+### Mouse Operations
+- **Left Drag**: Draw live cells (based on current brush size)
+- **Save Mode ON**: Left click only adds live cells, no erasing
+- **Save Mode OFF**: Left click toggles cell state (alive ↔ dead)
+
+### Interface Buttons
+- **Pause/Resume**: Control simulation running state
+- **Reset**: Regenerate random initial state
+- **Toggle Grid**: Show/hide grid lines
+- **Clear**: Remove all live cells
+- **Save Mode**: Toggle brush mode (add/toggle)
+- **Decrease Brush**: Decrease brush radius (minimum 1)
+- **Increase Brush**: Increase brush radius (maximum 30)
+- **FPS-**: Decrease simulation frame rate (minimum 15 FPS)
+- **FPS+**: Increase simulation frame rate (maximum 300 FPS)
+- **Switch to CPU/GPU**: Toggle between CPU and GPU computation modes
+
+### Keyboard Shortcuts
+The program mainly relies on mouse operations, no preset keyboard shortcuts.
+
 ## 🔧 Technical Architecture
 
 ### Core Technology Stack
-- **Pygame**: Graphics interface and rendering engine
-- **NumPy**: Efficient numerical computation
-- **Numba**: JIT compiler for accelerating Python code
-- **CUDA**: GPU parallel computing (optional)
+- **Pygame 2.5.2+**: Graphics interface and rendering
+- **NumPy 1.24.3+**: Numerical computation and array operations
+- **Numba 0.58.0+**: JIT compilation optimization
+- **CUDA** (optional): GPU parallel computing
 
-### Performance Metrics
-- **CPU Mode**: Multi-core parallel support, 50-100x faster than pure Python
-- **GPU Mode**: On CUDA-supported devices, can handle larger grid sizes
-- **Memory Usage**: Optimized memory layout, supports long-running sessions
+### Performance Characteristics
+- **CPU Mode**: Uses Numba JIT and parallel computing, significantly faster than pure Python
+- **GPU Mode**: CUDA kernel parallel processing, suitable for large-scale computation
+- **Memory Efficiency**: Uses uint8 data type, optimized memory usage
+
+### Configuration Parameters
+- **Grid Size**: 800×440 (352,000 cells)
+- **Initial Density**: 41%
+- **Cluster Centers**: 4 Gaussian distribution centers
+- **Cluster Radius**: 345 pixels
+- **Default FPS**: 60 FPS
 
 ## 🎨 Interface Guide
 
-### Main Interface Areas
-- **Grid Area**: Displays Game of Life cell states
-- **Control Panel**: Contains all interactive buttons and status displays
-- **Statistics**: Real-time display of generation, live cell count, FPS, etc.
+### Main Interface Layout
+- **Upper Grid Area**: Displays cell states and grid
+- **Lower Control Panel**: Contains all control buttons and status information
 
-### Button Functions
-- **▶️/⏸️**: Start/Pause simulation
-- **⏭️**: Single step execution
-- **🔄**: Regenerate
-- **🗑️**: Clear screen
-- **💾**: Save current state
-- **📁**: Load preset patterns
+### Status Information
+- **Device**: Current computation device (CPU/GPU)
+- **Compute Time**: Time per iteration (milliseconds)
+- **FPS**: Current running frame rate
+- **Generation**: Number of simulation generations completed
+- **Live Cells**: Current live cell count and percentage
+- **Status**: Running/paused state
+- **Save Mode**: Brush mode status
+- **Brush Size**: Current brush radius
 
-## 🤝 Contributing
+## ⚠️ Notes
 
-Issues and Pull Requests are welcome! Before contributing code, please ensure:
-
-1. Code follows PEP 8 standards
-2. Add appropriate comments and documentation
-3. Test compatibility across different configurations
-4. Update relevant documentation
+1. **GPU Support**: Requires NVIDIA GPU with CUDA support and drivers installed
+2. **Font Display**: Program attempts to load Chinese fonts, falls back to system default if failed
+3. **Performance Difference**: GPU mode performs better on supported devices, but has initialization overhead on first run
+4. **Boundary Handling**: Uses periodic boundary conditions, cells can exit one side and enter from the opposite side
 
 ## 📄 License
 
 This project uses the MIT License, see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## 🤝 Contributing
 
-- John Conway: Creator of the Game of Life
-- Pygame Community: Provides excellent game development framework
-- Numba Team: Making Python numerical computing faster
-- All contributors and users
-
-## 📞 Contact
-
-For questions or suggestions, please contact us via GitHub Issues.
+Issues and Pull Requests to improve the project are welcome!
 
 ---
 
-*Let life bloom in code!*
+*Game of Life, evolving in code*
